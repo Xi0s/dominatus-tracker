@@ -1,16 +1,82 @@
-# React + Vite
+# Dominatus Campaign Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Dominatus Campaign Tracker is a browser-based ledger for running War Zone Armageddon campaigns. Use it to manage campaign phases and locations, roster commanders, record battles and scores, track agendas and upgrades, and maintain the campaign narrative.
 
-Currently, two official plugins are available:
+The app is fully local. It has no backend, authentication, Firebase configuration, or remote campaign storage.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Requirements
 
-## React Compiler
+- Node.js 20 or later
+- npm
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Develop
 
-## Expanding the Oxlint configuration
+Install the project dependencies once:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```sh
+npm install
+```
+
+Start the Vite development server:
+
+```sh
+npm run dev
+```
+
+Open the local URL printed by Vite. The app is served under `/dominatus-tracker/` to match its configured deployment base path.
+
+## Build
+
+Create an optimized production build:
+
+```sh
+npm run build
+```
+
+The generated static site is written to `dist/`. Preview that build locally with:
+
+```sh
+npm run preview
+```
+
+## Test And Lint
+
+Run the end-to-end Playwright suite:
+
+```sh
+npm run test:e2e
+```
+
+The suite starts a local development server when needed and covers startup, autosaving, commander management, battle recording, and JSON import/export.
+
+Run the source linter with:
+
+```sh
+npm run lint
+```
+
+If Playwright's Chromium runtime has not been installed on a machine yet, run:
+
+```sh
+npx playwright install chromium
+```
+
+## Campaign Data
+
+Campaign data is stored in the current browser profile's `localStorage` under the versioned key `dominatus-campaign-tracker.v1`. Each browser profile and device has its own separate campaign copy.
+
+Use **Export JSON** to download a portable campaign file and **Import JSON** to restore one. Export campaign data regularly: clearing browser site data or choosing **Reset local data** permanently removes the local copy.
+
+## Project Layout
+
+```text
+src/
+	components/  Shared UI building blocks
+	data/        Static campaign rules and card data
+	features/    Campaign, roster, and battle-log views
+	lib/         Campaign helpers and local persistence
+	App.jsx      Application state and feature composition
+tests/         Playwright end-to-end tests
+```
+
+Static campaign data is kept separate from UI and persistence code to make rules-content updates easier to review.
