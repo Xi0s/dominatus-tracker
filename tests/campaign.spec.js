@@ -19,6 +19,25 @@ test('autosaves campaign edits across a reload', async ({ page }) => {
   await expect(page.locator('header textarea')).toHaveValue('Siege of Volcanus');
 });
 
+test('updates and persists games per phase', async ({ page }) => {
+  const games = page.getByLabel('Games in First Encounters');
+  await games.fill('4');
+  await expect(games).toHaveValue('4');
+  await page.reload();
+  await expect(page.getByLabel('Games in First Encounters')).toHaveValue('4');
+});
+
+test('keeps phase game controls usable on mobile', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  const games = page.getByLabel('Games in First Encounters');
+  await expect(games).toBeVisible();
+
+  const box = await games.boundingBox();
+  expect(box).not.toBeNull();
+  expect(box.height).toBeGreaterThanOrEqual(36);
+  expect(box.x + box.width).toBeLessThanOrEqual(390);
+});
+
 test('can add and edit a commander in the roster', async ({ page }) => {
   await page.getByRole('button', { name: 'Roster' }).click();
   await page.getByRole('button', { name: '+ Muster Commander' }).click();

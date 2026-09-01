@@ -5,6 +5,7 @@ export function defaultCampaign() {
   return {
     campaignName: 'The Dominatus Campaign',
     currentPhase: 1,
+    battlesPerPhase: { 1: 2, 2: 2, 3: 1 },
     locationByPhase: { 1: null, 2: null, 3: null }, // Location card id, once drawn/chosen for that phase
     locationControlByPhase: {}, // { [phase]: allianceKey } — set once that phase resolves
     briefingNotesByPhase: { 1: '', 2: '', 3: '' },

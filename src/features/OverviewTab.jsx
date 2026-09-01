@@ -190,6 +190,12 @@ function BriefingDisplay({ campaign, updateCampaign }) {
 
 export default function OverviewTab({ campaign, updateCampaign, players }) {
   const phase = campaign.currentPhase;
+  const gamesForPhase = (phaseId, defaultCount) => campaign.battlesPerPhase?.[phaseId] ?? defaultCount;
+
+  const updateGamesForPhase = (phaseId, value) => {
+    const games = Math.min(99, Math.max(1, Number(value) || 1));
+    updateCampaign({ battlesPerPhase: { ...campaign.battlesPerPhase, [phaseId]: games } });
+  };
 
   const allianceTally = Object.keys(ALLIANCES).reduce((acc, key) => {
     acc[key] = players.filter(p => p.alliance === key).length;
@@ -200,26 +206,40 @@ export default function OverviewTab({ campaign, updateCampaign, players }) {
     <div style={{ display: 'grid', gap: '1.6rem' }}>
       <div style={{ background: '#15191b', border: '1.5px solid #3a4448', borderRadius: '4px', padding: '1.2rem 1.4rem' }}>
         <SectionHeader sub="Set the current campaign phase and the location card in effect.">Campaign Phase</SectionHeader>
-        <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.6rem', marginBottom: '1rem' }}>
           {PHASES.map(p => (
-            <button
+            <div
               key={p.id}
-              onClick={() => updateCampaign({ currentPhase: p.id })}
               style={{
-                flex: '1 1 160px',
                 textAlign: 'left',
                 padding: '0.8rem 1rem',
                 border: phase === p.id ? '2.5px solid #e4e9ea' : '1.5px solid #3a4448',
                 background: phase === p.id ? '#e4e9ea' : 'transparent',
                 color: phase === p.id ? '#0c0f10' : '#e4e9ea',
-                cursor: 'pointer',
                 borderRadius: '3px',
               }}
             >
-              <div style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '0.7rem', opacity: 0.8 }}>PHASE {p.id}</div>
-              <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontWeight: 600, textTransform: 'uppercase', fontSize: '0.95rem' }}>{p.name}</div>
-              <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontStyle: 'italic', fontSize: '0.85rem', opacity: 0.85 }}>{p.battles} battles / player</div>
-            </button>
+              <button
+                onClick={() => updateCampaign({ currentPhase: p.id })}
+                style={{ width: '100%', padding: 0, border: 'none', background: 'transparent', color: 'inherit', cursor: 'pointer', textAlign: 'left' }}
+              >
+                <div style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '0.7rem', opacity: 0.8 }}>PHASE {p.id}</div>
+                <div style={{ fontFamily: "'Chakra Petch', sans-serif", fontWeight: 600, textTransform: 'uppercase', fontSize: '0.95rem' }}>{p.name}</div>
+              </button>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginTop: '0.65rem', fontFamily: "'Chakra Petch', sans-serif", fontSize: '0.8rem', fontWeight: 600 }}>
+                Games per player
+                <input
+                  aria-label={`Games in ${p.name}`}
+                  type="number"
+                  min="1"
+                  max="99"
+                  inputMode="numeric"
+                  value={gamesForPhase(p.id, p.battles)}
+                  onChange={(event) => updateGamesForPhase(p.id, event.target.value)}
+                  style={{ width: '4rem', minHeight: '2.25rem', marginLeft: 'auto', padding: '0.2rem 0.4rem', border: '1.5px solid currentColor', borderRadius: '3px', background: 'transparent', color: 'inherit', font: 'inherit', textAlign: 'center', boxSizing: 'border-box' }}
+                />
+              </label>
+            </div>
           ))}
         </div>
 
